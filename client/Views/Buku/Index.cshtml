@@ -23,7 +23,8 @@
                 </span>
             </div>
             
-            @if (!string.IsNullOrEmpty(ViewBag.SearchKeyword as string))
+            
+            if (!string.IsNullOrEmpty(ViewBag.SearchKeyword as string))
             {
                 <a href="@Url.Action("Index")" class="btn btn-link">
                     <i class="glyphicon glyphicon-remove"></i> Reset

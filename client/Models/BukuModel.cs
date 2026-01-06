@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace client.Models
 {
-    [XmlType("BukuDTO", Namespace = "http://schemas.datacontract.org/2004/07/PerpustakaanAPI.Models")]
+    [XmlType("BukuDTO")]
     public class BukuModel
     {
         public int id_buku { get; set; } // Sesuai kolom id_buku di SQL 
@@ -18,6 +18,7 @@ namespace client.Models
         public int? stok_minimal { get; set; }
         
         // Property untuk nested object kategori dari API
+        [XmlElement("kategori")]
         public KategoriModel kategori { get; set; }
     }
 }

@@ -73,7 +73,7 @@ namespace client.Controllers
         public async Task<ActionResult> Edit(int id, BukuModel m)
         {
             HttpClient client = ApiService.GetClient();
-            var response = await client.PutAsXmlAsync($"api/buku/{id}", m);
+            var response = await client.PutAsJsonAsync($"api/buku/{id}", m);
             
             if (response.IsSuccessStatusCode)
             {
@@ -96,7 +96,7 @@ namespace client.Controllers
         public async Task<ActionResult> Create(BukuModel m)
         {
             HttpClient client = ApiService.GetClient();
-            var response = await client.PostAsXmlAsync("api/buku", m);
+            var response = await client.PostAsJsonAsync("api/buku", m);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -110,7 +110,7 @@ namespace client.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             HttpClient client = ApiService.GetClient();
-            await client.DeleteAsync("api/buku?id=" + id);
+            await client.DeleteAsync($"api/buku/{id}");
             return RedirectToAction("Index");
         }
     }

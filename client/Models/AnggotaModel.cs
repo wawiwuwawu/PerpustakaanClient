@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace client.Models
 {
-    [XmlType("AnggotaDTO", Namespace = "http://schemas.datacontract.org/2004/07/PerpustakaanAPI.Models")]
+    [XmlType("AnggotaDTO")]
     public class AnggotaModel
     {
         public int id_anggota { get; set; } // Sesuai kolom di SQL 
