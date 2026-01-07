@@ -25,12 +25,24 @@ namespace client.Controllers
         [HttpPost]
         public ActionResult Login(UserLoginModel model)
         {
-            // Validasi login sederhana (hardcoded)
+            // Validasi login sederhana (hardcoded - bisa diganti dengan API login nanti)
             if (model.Username == "admin" && model.Password == "admin123")
             {
-                // Simpan session
+                // Simpan session lengkap
                 Session["Username"] = model.Username;
-                Session["Role"] = "Administrator Perpustakaan";
+                Session["nama_user"] = "Administrator"; // Nama lengkap user
+                Session["id_user"] = 1; // ID user (hardcoded untuk admin)
+                Session["Role"] = "admin"; // Role: admin atau petugas
+                
+                return RedirectToAction("Dashboard");
+            }
+            else if (model.Username == "petugas" && model.Password == "petugas123")
+            {
+                // Login sebagai petugas
+                Session["Username"] = model.Username;
+                Session["nama_user"] = "Petugas 1"; // Nama lengkap user
+                Session["id_user"] = 2; // ID user petugas
+                Session["Role"] = "petugas"; // Role petugas
                 
                 return RedirectToAction("Dashboard");
             }

@@ -93,5 +93,33 @@ namespace client.helper
                 return (AnggotaModel)serializer.Deserialize(reader);
             }
         }
+
+        // Untuk data Peminjaman (List)
+        public static List<PeminjamanModel> ToPeminjamanList(string xml)
+        {
+            XmlRootAttribute xRoot = new XmlRootAttribute();
+            xRoot.ElementName = "ArrayOfPeminjamanDTO";
+            xRoot.Namespace = "";  // Empty namespace
+            
+            var serializer = new XmlSerializer(typeof(List<PeminjamanModel>), xRoot);
+            using (StringReader reader = new StringReader(xml))
+            {
+                return (List<PeminjamanModel>)serializer.Deserialize(reader);
+            }
+        }
+
+        // Untuk single Peminjaman (Get by ID)
+        public static PeminjamanModel ToPeminjaman(string xml)
+        {
+            XmlRootAttribute xRoot = new XmlRootAttribute();
+            xRoot.ElementName = "PeminjamanDTO";
+            xRoot.Namespace = "";  // Empty namespace
+            
+            var serializer = new XmlSerializer(typeof(PeminjamanModel), xRoot);
+            using (StringReader reader = new StringReader(xml))
+            {
+                return (PeminjamanModel)serializer.Deserialize(reader);
+            }
+        }
     }
 }

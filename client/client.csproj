@@ -148,6 +148,7 @@
     <Compile Include="Controllers\BukuController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KategoriController.cs" />
+    <Compile Include="Controllers\PeminjamanController.cs" />
     <Compile Include="Filters\CustomAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -158,6 +159,7 @@
     <Compile Include="Models\AnggotaModel.cs" />
     <Compile Include="Models\BukuModel.cs" />
     <Compile Include="Models\KategoriModel.cs" />
+    <Compile Include="Models\PeminjamanModel.cs" />
     <Compile Include="Models\UserLoginModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -224,6 +226,8 @@
     <Content Include="Views\Buku\Edit.cshtml" />
     <Content Include="Views\Kategori\Edit.cshtml" />
     <Content Include="Views\Anggota\Edit.cshtml" />
+    <Content Include="Views\Peminjaman\Index.cshtml" />
+    <Content Include="Views\Peminjaman\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
