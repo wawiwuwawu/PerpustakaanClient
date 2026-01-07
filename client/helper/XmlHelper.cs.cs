@@ -3,7 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
 using System.Web;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace client.helper
@@ -150,6 +154,38 @@ namespace client.helper
             catch (Exception)
             {
                 // Jika gagal, return null
+                return null;
+            }
+        }
+
+        // Untuk single User (Login Response)
+        public static UserModel ToUser(string xml)
+        {
+            try
+            {
+                // Log XML untuk debugging
+                System.Diagnostics.Debug.WriteLine("Parsing User XML: " + xml);
+                
+                // Parse menggunakan XDocument (lebih flexible untuk handle berbagai namespace)
+                XDocument doc = XDocument.Parse(xml);
+                var root = doc.Root;
+                XNamespace ns = root.GetDefaultNamespace();
+                
+                var user = new UserModel
+                {
+                    id_user = int.Parse(root.Element(ns + "id_user")?.Value ?? "0"),
+                    username = root.Element(ns + "username")?.Value,
+                    nama_lengkap = root.Element(ns + "nama_lengkap")?.Value,
+                    role = root.Element(ns + "role")?.Value
+                };
+                
+                System.Diagnostics.Debug.WriteLine($"User parsed successfully: {user.username} (ID: {user.id_user}, Role: {user.role})");
+                return user;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error parsing User XML: " + ex.ToString());
+                System.Diagnostics.Debug.WriteLine("XML Content: " + xml);
                 return null;
             }
         }

@@ -1,8 +1,12 @@
 ﻿using client.Models;
 using client.Filters;
+using client.Scripts.service;
+using client.helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -23,33 +27,85 @@ namespace client.Controllers
 
         // POST: Login
         [HttpPost]
-        public ActionResult Login(UserLoginModel model)
+        public async Task<ActionResult> Login(UserLoginModel model)
         {
-            // Validasi login sederhana (hardcoded - bisa diganti dengan API login nanti)
-            if (model.Username == "admin" && model.Password == "admin123")
+            try
             {
-                // Simpan session lengkap
-                Session["Username"] = model.Username;
-                Session["nama_user"] = "Administrator"; // Nama lengkap user
-                Session["id_user"] = 1; // ID user (hardcoded untuk admin)
-                Session["Role"] = "admin"; // Role: admin atau petugas
+                HttpClient client = ApiService.GetClient();
                 
-                return RedirectToAction("Dashboard");
-            }
-            else if (model.Username == "petugas" && model.Password == "petugas123")
-            {
-                // Login sebagai petugas
-                Session["Username"] = model.Username;
-                Session["nama_user"] = "Petugas 1"; // Nama lengkap user
-                Session["id_user"] = 2; // ID user petugas
-                Session["Role"] = "petugas"; // Role petugas
+                // Kirim request login ke API dengan JSON body
+                var response = await client.PostAsJsonAsync("api/auth/login", new 
+                { 
+                    username = model.Username, 
+                    password = model.Password 
+                });
                 
-                return RedirectToAction("Dashboard");
+                if (response.IsSuccessStatusCode)
+                {
+                    // Baca response body (XML) untuk mendapatkan data user lengkap
+                    string xml = await response.Content.ReadAsStringAsync();
+                    
+                    // Debug: Log XML response (hapus setelah testing)
+                    System.Diagnostics.Debug.WriteLine("XML Response: " + xml);
+                    
+                    // Parse XML response ke UserModel
+                    var user = XmlHelper.ToUser(xml);
+                    
+                    // Validasi bahwa user berhasil di-parse
+                    if (user == null)
+                    {
+                        ViewBag.ErrorMessage = "Gagal membaca data user dari server. Format response tidak valid.";
+                        return View("Index", model);
+                    }
+                    
+                    // Baca custom headers dari response (optional - hanya untuk logging/debugging)
+                    string userId = null;
+                    string userRole = null;
+                    
+                    try
+                    {
+                        if (response.Headers.Contains("X-User-Id"))
+                        {
+                            userId = response.Headers.GetValues("X-User-Id").FirstOrDefault();
+                        }
+                        
+                        if (response.Headers.Contains("X-User-Role"))
+                        {
+                            userRole = response.Headers.GetValues("X-User-Role").FirstOrDefault();
+                        }
+                    }
+                    catch (Exception headerEx)
+                    {
+                        // Header parsing error tidak kritis, lanjutkan dengan data dari XML
+                        System.Diagnostics.Debug.WriteLine("Header parsing error: " + headerEx.Message);
+                    }
+                    
+                    // Simpan session menggunakan data dari XML response body
+                    Session["Username"] = user.username;
+                    Session["nama_user"] = user.nama_lengkap;
+                    Session["id_user"] = user.id_user;
+                    Session["Role"] = user.role;
+                    
+                    return RedirectToAction("Dashboard");
+                }
+                else
+                {
+                    // Login gagal - tampilkan error message
+                    ViewBag.ErrorMessage = "Username atau password salah!";
+                    return View("Index", model);
+                }
             }
-            else
+            catch (HttpRequestException httpEx)
             {
-                // Login gagal
-                ViewBag.ErrorMessage = "Username atau password salah!";
+                // Error koneksi ke API
+                ViewBag.ErrorMessage = $"Tidak dapat terhubung ke server: {httpEx.Message}";
+                return View("Index", model);
+            }
+            catch (Exception ex)
+            {
+                // Tangani error lainnya
+                ViewBag.ErrorMessage = $"Terjadi kesalahan saat login: {ex.Message}";
+                System.Diagnostics.Debug.WriteLine("Login error: " + ex.ToString());
                 return View("Index", model);
             }
         }
