@@ -33,21 +33,36 @@ namespace client.Controllers
         // GET: Buku (Tampil Semua Buku)
         public async Task<ActionResult> Index(string search)
         {
-            HttpClient client = ApiService.GetClient();
-            
-            // Jika ada parameter search, gunakan endpoint search
-            string url = string.IsNullOrEmpty(search) 
-                ? "api/buku" 
-                : $"api/buku?search={search}";
-            
-            var response = await client.GetAsync(url);
-            string xml = await response.Content.ReadAsStringAsync();
-            var data = XmlHelper.ToBukuList(xml);
-            
-            // Simpan search keyword untuk ditampilkan di view
-            ViewBag.SearchKeyword = search;
-            
-            return View(data);
+            try
+            {
+                HttpClient client = ApiService.GetClient();
+                
+                // Jika ada parameter search, gunakan endpoint search
+                string url = string.IsNullOrEmpty(search) 
+                    ? "api/buku" 
+                    : $"api/buku?search={search}";
+                
+                var response = await client.GetAsync(url);
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = "Gagal mengambil data buku dari server.";
+                    return View(new List<BukuModel>());
+                }
+                
+                string xml = await response.Content.ReadAsStringAsync();
+                var data = XmlHelper.ToBukuList(xml);
+                
+                // Simpan search keyword untuk ditampilkan di view
+                ViewBag.SearchKeyword = search;
+                
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Terjadi kesalahan: {ex.Message}";
+                return View(new List<BukuModel>());
+            }
         }
 
         // GET: Buku/Edit/5
@@ -72,12 +87,26 @@ namespace client.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(int id, BukuModel m)
         {
-            HttpClient client = ApiService.GetClient();
-            var response = await client.PutAsJsonAsync($"api/buku/{id}", m);
-            
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return RedirectToAction("Index");
+                HttpClient client = ApiService.GetClient();
+                var response = await client.PutAsJsonAsync($"api/buku/{id}", m);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Buku berhasil diupdate!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    // Baca error message dari API response
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    ViewBag.ErrorMessage = ErrorHelper.FormatErrorMessage("Mengupdate buku", response.StatusCode, errorContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Terjadi kesalahan: {ex.Message}";
             }
             
             await LoadKategori();
@@ -95,12 +124,28 @@ namespace client.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(BukuModel m)
         {
-            HttpClient client = ApiService.GetClient();
-            var response = await client.PostAsJsonAsync("api/buku", m);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return RedirectToAction("Index");
+                HttpClient client = ApiService.GetClient();
+                var response = await client.PostAsJsonAsync("api/buku", m);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Buku berhasil ditambahkan!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    // Baca error message dari API response
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    ViewBag.ErrorMessage = ErrorHelper.FormatErrorMessage("Menambahkan buku", response.StatusCode, errorContent);
+                }
             }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Terjadi kesalahan: {ex.Message}";
+            }
+            
             await LoadKategori();
             return View(m);
         }
@@ -109,8 +154,25 @@ namespace client.Controllers
         [HttpPost]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            HttpClient client = ApiService.GetClient();
-            await client.DeleteAsync($"api/buku/{id}");
+            try
+            {
+                HttpClient client = ApiService.GetClient();
+                var response = await client.DeleteAsync($"api/buku/{id}");
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Buku berhasil dihapus!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Gagal menghapus buku. Silakan coba lagi.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Terjadi kesalahan: {ex.Message}";
+            }
+            
             return RedirectToAction("Index");
         }
     }

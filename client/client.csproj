@@ -152,6 +152,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="helper\ErrorHelper.cs" />
     <Compile Include="helper\JsonHelper.cs" />
     <Compile Include="helper\XmlHelper.cs.cs" />
     <Compile Include="Models\AnggotaModel.cs" />
@@ -221,6 +222,8 @@
     <Content Include="Views\Buku\Index.cshtml" />
     <Content Include="Views\Buku\Create.cshtml" />
     <Content Include="Views\Buku\Edit.cshtml" />
+    <Content Include="Views\Kategori\Edit.cshtml" />
+    <Content Include="Views\Anggota\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
