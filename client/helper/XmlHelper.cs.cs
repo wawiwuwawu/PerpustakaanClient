@@ -41,14 +41,22 @@ namespace client.helper
         // Untuk data Anggota
         public static List<AnggotaModel> ToAnggotaList(string xml)
         {
-            XmlRootAttribute xRoot = new XmlRootAttribute();
-            xRoot.ElementName = "ArrayOfAnggotaDTO";
-            xRoot.Namespace = "";  // Empty namespace
-            
-            var serializer = new XmlSerializer(typeof(List<AnggotaModel>), xRoot);
-            using (StringReader reader = new StringReader(xml))
+            try
             {
-                return (List<AnggotaModel>)serializer.Deserialize(reader);
+                XmlRootAttribute xRoot = new XmlRootAttribute();
+                xRoot.ElementName = "ArrayOfAnggotaDTO";
+                xRoot.Namespace = "";  // Empty namespace
+                
+                var serializer = new XmlSerializer(typeof(List<AnggotaModel>), xRoot);
+                using (StringReader reader = new StringReader(xml))
+                {
+                    return (List<AnggotaModel>)serializer.Deserialize(reader);
+                }
+            }
+            catch (Exception)
+            {
+                // Jika gagal, return empty list
+                return new List<AnggotaModel>();
             }
         }
 
@@ -83,42 +91,66 @@ namespace client.helper
         // Untuk single Anggota (Get by ID)
         public static AnggotaModel ToAnggota(string xml)
         {
-            XmlRootAttribute xRoot = new XmlRootAttribute();
-            xRoot.ElementName = "AnggotaDTO";
-            xRoot.Namespace = "";  // Empty namespace
-            
-            var serializer = new XmlSerializer(typeof(AnggotaModel), xRoot);
-            using (StringReader reader = new StringReader(xml))
+            try
             {
-                return (AnggotaModel)serializer.Deserialize(reader);
+                XmlRootAttribute xRoot = new XmlRootAttribute();
+                xRoot.ElementName = "AnggotaDTO";
+                xRoot.Namespace = "";  // Empty namespace
+                
+                var serializer = new XmlSerializer(typeof(AnggotaModel), xRoot);
+                using (StringReader reader = new StringReader(xml))
+                {
+                    return (AnggotaModel)serializer.Deserialize(reader);
+                }
+            }
+            catch (Exception)
+            {
+                // Jika gagal, return null
+                return null;
             }
         }
 
         // Untuk data Peminjaman (List)
         public static List<PeminjamanModel> ToPeminjamanList(string xml)
         {
-            XmlRootAttribute xRoot = new XmlRootAttribute();
-            xRoot.ElementName = "ArrayOfPeminjamanDTO";
-            xRoot.Namespace = "";  // Empty namespace
-            
-            var serializer = new XmlSerializer(typeof(List<PeminjamanModel>), xRoot);
-            using (StringReader reader = new StringReader(xml))
+            try
             {
-                return (List<PeminjamanModel>)serializer.Deserialize(reader);
+                XmlRootAttribute xRoot = new XmlRootAttribute();
+                xRoot.ElementName = "ArrayOfPeminjamanDTO";
+                xRoot.Namespace = "";  // Empty namespace
+                
+                var serializer = new XmlSerializer(typeof(List<PeminjamanModel>), xRoot);
+                using (StringReader reader = new StringReader(xml))
+                {
+                    return (List<PeminjamanModel>)serializer.Deserialize(reader);
+                }
+            }
+            catch (Exception)
+            {
+                // Jika gagal, return empty list
+                return new List<PeminjamanModel>();
             }
         }
 
         // Untuk single Peminjaman (Get by ID)
         public static PeminjamanModel ToPeminjaman(string xml)
         {
-            XmlRootAttribute xRoot = new XmlRootAttribute();
-            xRoot.ElementName = "PeminjamanDTO";
-            xRoot.Namespace = "";  // Empty namespace
-            
-            var serializer = new XmlSerializer(typeof(PeminjamanModel), xRoot);
-            using (StringReader reader = new StringReader(xml))
+            try
             {
-                return (PeminjamanModel)serializer.Deserialize(reader);
+                XmlRootAttribute xRoot = new XmlRootAttribute();
+                xRoot.ElementName = "PeminjamanDTO";
+                xRoot.Namespace = "";  // Empty namespace
+                
+                var serializer = new XmlSerializer(typeof(PeminjamanModel), xRoot);
+                using (StringReader reader = new StringReader(xml))
+                {
+                    return (PeminjamanModel)serializer.Deserialize(reader);
+                }
+            }
+            catch (Exception)
+            {
+                // Jika gagal, return null
+                return null;
             }
         }
     }
